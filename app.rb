@@ -1,6 +1,13 @@
+require 'dotenv/load'
 require 'sinatra'
 require 'erb'
 require 'sequel'
+require 'spotify'
+
+@accounts = Spotify::Accounts.new
+@accounts.client_id = ENV['SPOTIFY_CLIENT_ID']
+@accounts.client_secret = ENV['SPOTIFY_CLIENT_SECRET']
+@accounts.redirect_uri = ENV['SPOTIFY_REDIRECT_URI']
 
 enable :sessions
 set :session_store, Rack::Session::Pool

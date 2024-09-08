@@ -1,0 +1,18 @@
+<tr id="stream-for-<%= stream[:id] %>">
+  <td>
+    <%= stream[:artist] %>
+  </td>
+  <td>
+    <%= stream[:album] %>
+  </td>
+  <td>
+    <button
+      hx-post="/toggle-owned/<%= stream[:id] %>"
+      hx-trigger="click"
+      hx-target="#stream-for-<%= stream[:id] %>"
+      hx-swap="outerHTML">
+      Purchased!
+    </button>
+    <%= stream[:is_owned] %>
+  </td>
+</tr>

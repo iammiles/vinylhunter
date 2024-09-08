@@ -1,0 +1,16 @@
+<div class="container" id="results">
+  <table class="u-full-width" >
+    <thead>
+    <tr>
+      <td>Artist</td>
+      <td>Album</td>
+      <td>Owned?</td>
+    </tr>
+    </thead>
+    <tbody>
+    <% streams.each do |stream| %>
+      <%= erb :stream, :locals => { stream: stream } %>
+    <% end %>
+    </tbody>
+  </table>
+</div>

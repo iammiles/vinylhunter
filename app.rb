@@ -2,9 +2,8 @@ require 'sinatra'
 require 'erb'
 require 'sequel'
 
-class Settings
-  attr_accessor :starts_with, :show_owned
-end
+enable :sessions
+set :session_store, Rack::Session::Pool
 
 DB = Sequel.connect('sqlite://db/app.db')
 class Stream < Sequel::Model
@@ -26,7 +25,11 @@ before do
 end
 
 get '/' do
+  puts "what is this #{session['letter']}"
   streams = Stream.where(is_owned: false)
+  unless session['letter'].nil?
+    streams = streams.all_artists_by_letter(session['letter'])
+  end
   erb :index, :locals => { streams: streams }
 end
 
@@ -39,6 +42,11 @@ post '/toggle-owned/:id' do
 end
 
 post '/filter-by-letter/:letter' do
+  puts "what is this #{params['letter']}"
+  if params['letter'] == 'All'
+    session['letter'] = nil
+    else session['letter'] = params['letter']
+  end
   filtered_streams = Stream.all_artists_by_letter(params['letter'])
   erb :results, :locals => { streams: filtered_streams }
 end

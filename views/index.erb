@@ -7,6 +7,12 @@
   </head>
   <body>
     <div class="full center">
+      <a href="#"
+         hx-trigger="click"
+         data-hx-post="/filter-by-letter/All"
+         hx-swap="outerHTML"
+         hx-target="#results">All |
+      </a>
       <% ('A'..'Z').to_a.each do |l| %>
         <a href="#"
            hx-trigger="click"

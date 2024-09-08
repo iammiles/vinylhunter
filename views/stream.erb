@@ -1,18 +1,25 @@
-<tr id="stream-for-<%= stream[:id] %>">
-  <td>
-    <%= stream[:artist] %>
-  </td>
-  <td>
-    <%= stream[:album] %>
-  </td>
-  <td>
-    <button
-      hx-post="/toggle-owned/<%= stream[:id] %>"
-      hx-trigger="click"
-      hx-target="#stream-for-<%= stream[:id] %>"
-      hx-swap="outerHTML">
-      Purchased!
-    </button>
-    <%= stream[:is_owned] %>
-  </td>
-</tr>
+<div class="flex two" id="stream-for-<%= stream[:id] %>">
+  <article class="card">
+    <img src="img/vinyl.png">
+    <footer>
+      <h5><%= stream[:artist] %></h5>
+      <h6><%= stream[:album] %></h6>
+      <button
+        class="success center"
+        hx-post="/toggle-owned/<%= stream[:id] %>"
+        hx-trigger="click"
+        hx-target="#stream-for-<%= stream[:id] %>"
+        hx-swap="outerHTML">
+        Purchased!
+      </button>
+      <button
+        class="error center"
+        hx-delete="/<%= stream[:id] %>"
+        hx-trigger="click"
+        hx-target="#stream-for-<%= stream[:id] %>"
+        hx-swap="delete">
+        Remove
+      </button>
+    </footer>
+  </article>
+</div>

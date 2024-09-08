@@ -43,6 +43,11 @@ post '/filter-by-letter/:letter' do
   erb :results, :locals => { streams: filtered_streams }
 end
 
+delete '/:id' do
+  Stream[params['id'].to_i].delete
+  redirect '/'
+end
+
 not_found do
   'Four oh four!'
 end

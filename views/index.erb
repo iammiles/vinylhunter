@@ -2,21 +2,22 @@
   <head>
     <meta charset="UTF-8">
     <title>Vinyl Hunter</title>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/picnic.min.css">
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
   </head>
   <body>
-    <div class="container">
-      <div class="row">
-        <% ('A'..'Z').to_a.each do |l| %>
-          <a href="#"
-             data-hx-post="/filter-by-letter/<%= l %>"
-             hx-swap="outerHTML"
-             hx-target="#results"><%= l %>
-          </a> |
+    <div class="full center">
+      <% ('A'..'Z').to_a.each do |l| %>
+        <a href="#"
+           hx-trigger="click"
+           data-hx-post="/filter-by-letter/<%= l %>"
+           hx-swap="outerHTML"
+           hx-target="#results"><%= l %>
+        </a>
+        <% unless l == 'Z' %>
+          |
         <% end %>
-      </div>
+      <% end %>
     </div>
     <%= erb :results, :locals => { streams: streams } %>
   </body>

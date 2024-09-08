@@ -1,16 +1,7 @@
-<div class="container" id="results">
-  <table class="u-full-width" >
-    <thead>
-    <tr>
-      <td>Artist</td>
-      <td>Album</td>
-      <td>Owned?</td>
-    </tr>
-    </thead>
-    <tbody>
+<div class="full center" id="results">
+  <div class="flex three demo" >
     <% streams.each do |stream| %>
       <%= erb :stream, :locals => { stream: stream } %>
     <% end %>
-    </tbody>
-  </table>
+  </div>
 </div>

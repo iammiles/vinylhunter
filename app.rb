@@ -13,21 +13,16 @@ class Stream < Sequel::Model
     def all_artists_by_letter(letter)
       where(Sequel.like(:artist, "#{letter}%") | Sequel.like(:artist, "The #{letter}%")).
       where(is_owned: false).
-      order(Sequel.desc(:artist)).
+      order(Sequel.desc(:listens)).
       all
     end
   end
 end
 
 
-before do
-  puts "auth?"
-end
-
 get '/' do
-  puts "what is this #{session['letter']}"
-  streams = Stream.where(is_owned: false)
-  unless session['letter'].nil?
+  streams = Stream.where(is_owned: false).order(Sequel.desc(:listens))
+  if session['letter'].nil?
     streams = streams.all_artists_by_letter(session['letter'])
   end
   erb :index, :locals => { streams: streams }
@@ -42,12 +37,11 @@ post '/toggle-owned/:id' do
 end
 
 post '/filter-by-letter/:letter' do
-  puts "what is this #{params['letter']}"
   if params['letter'] == 'All'
     session['letter'] = nil
-    else session['letter'] = params['letter']
+  else session['letter'] = params['letter']
   end
-  filtered_streams = Stream.all_artists_by_letter(params['letter'])
+  filtered_streams = Stream.all_artists_by_letter(session['letter'])
   erb :results, :locals => { streams: filtered_streams }
 end
 

@@ -40,7 +40,22 @@ end
 
 
 get '/' do
+  if session['spotify_refresh_token'].nil?
+    redirect '/authorize'
+  end
+
+  @spotify_session = Spotify::Accounts::Session.from_refresh_token(@accounts, session['spotify_refresh_token'])
   streams = Stream.where(is_owned: false).order(Sequel.desc(:listens))
+  @spotify_session.refresh!
+
+  @sdk = Spotify::SDK.new(@spotify_session)
+
+  puts @sdk.me.info
+
+  if @spotify_session.expired?
+    @spotify_session.refresh!
+  end
+
   if session['letter'].nil?
     streams = streams.all_artists_by_letter(session['letter'])
   end
@@ -48,9 +63,9 @@ get '/' do
 end
 
 get '/callback' do
-  @session = @accounts.exchange_for_session(params[:code])
-  session['spotify_code'] = params[:code]
-  "Okay."
+  @spotify_session = @accounts.exchange_for_session(params[:code])
+  session['spotify_refresh_token'] = @spotify_session.refresh_token
+  redirect '/'
 end
 
 post '/toggle-owned/:id' do

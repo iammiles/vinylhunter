@@ -2,12 +2,10 @@ require 'dotenv/load'
 require 'sinatra'
 require 'erb'
 require 'sequel'
+require "bundler"
+Bundler.require
 require 'spotify'
 
-@accounts = Spotify::Accounts.new
-@accounts.client_id = ENV['SPOTIFY_CLIENT_ID']
-@accounts.client_secret = ENV['SPOTIFY_CLIENT_SECRET']
-@accounts.redirect_uri = ENV['SPOTIFY_REDIRECT_URI']
 
 enable :sessions
 set :session_store, Rack::Session::Pool
@@ -18,12 +16,26 @@ class Stream < Sequel::Model
 
   dataset_module do
     def all_artists_by_letter(letter)
-      where(Sequel.like(:artist, "#{letter}%") | Sequel.like(:artist, "The #{letter}%")).
-      where(is_owned: false).
-      order(Sequel.desc(:listens)).
-      all
+      where(Sequel.like(:artist, "#{letter}%") | Sequel.like(:artist, "The #{letter}%"))
+        .where(is_owned: false)
+        .order(Sequel.desc(:listens))
+        .all
     end
   end
+end
+
+before do
+  @accounts = Spotify::Accounts.new
+  @accounts.client_id = ENV['SPOTIFY_CLIENT_ID']
+  @accounts.client_secret = ENV['SPOTIFY_CLIENT_SECRET']
+  @accounts.redirect_uri = ENV['SPOTIFY_REDIRECT_URI']
+end
+
+get '/authorize' do
+  auth_link = @accounts.authorize_url({
+                            scope: "user-read-private user-read-email user-library-read user-top-read"
+                          })
+  erb :authorize, :locals => { auth_link: auth_link }
 end
 
 
@@ -33,6 +45,12 @@ get '/' do
     streams = streams.all_artists_by_letter(session['letter'])
   end
   erb :index, :locals => { streams: streams }
+end
+
+get '/callback' do
+  @session = @accounts.exchange_for_session(params[:code])
+  session['spotify_code'] = params[:code]
+  "Okay."
 end
 
 post '/toggle-owned/:id' do

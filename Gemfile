@@ -6,5 +6,5 @@ gem 'puma'
 gem 'rerun'
 gem 'sequel'
 gem 'sqlite3'
-gem 'spotify-ruby'
+gem 'spotify-ruby', git: 'https://github.com/iammiles/spotify-ruby.git'
 gem 'dotenv', groups: [:development, :test]

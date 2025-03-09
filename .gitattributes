@@ -1,0 +1,2 @@
+*.erb linguist-language=Ruby
+*.html linguist-detectable=false
